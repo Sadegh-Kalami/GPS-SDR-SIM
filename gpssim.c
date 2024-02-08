@@ -2467,6 +2467,11 @@ int Mmain(int argc, char *argv[],char *value[])
     tend = clock();
 
     fprintf(stderr, "\nDone!\n");
+    while (timehandel <= 295)
+    {
+        timehandel = timehandel + 1 ;
+        Sleep(50);
+    }
     timehandel = 300;
     fprintf(fptr,"\nDone!\n");
 

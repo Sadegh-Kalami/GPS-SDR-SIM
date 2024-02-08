@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
     ui->progressBar->setMaximum(300);
-    ui->progressBar_Tab3->setMaximum(259);
+    ui->progressBar_Tab3->setMaximum(300);
 
     timer->setInterval(1000);
 }
@@ -145,7 +145,7 @@ void MainWindow::readtime()
         QTextStream in(&file);
         ui->TEXTRes->append(in.readAll());
     }
-    else if (currentOperationTab==2 && timehandel>=259)
+    else if (currentOperationTab==2 && timehandel>=299)
     {
         timer->stop();
         QFile file("readfile.txt");
@@ -170,7 +170,7 @@ void MainWindow::readata()
     else if (currentOperationTab == 2 && timehandel == 300) {
         // Delay execution
         QTimer::singleShot(3000, this, [this]() {
-            QMetaObject::invokeMethod(ui->progressBar_Tab3, "setValue", Q_ARG(int, 259));
+            QMetaObject::invokeMethod(ui->progressBar_Tab3, "setValue", Q_ARG(int, 300));
         });
     }
 
