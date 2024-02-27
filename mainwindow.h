@@ -16,6 +16,12 @@ public:
     ~MainWindow();
 signals:
     void setprogressbar(int value);
+signals:
+    void updateTextSignal(const QString& text);
+
+public slots:
+    void updateTextSlot(const QString& text);
+
 private slots:
     void on_BtnSelect_clicked();
 
@@ -33,11 +39,16 @@ private slots:
 
     void resetApplication(int index);
 
+    void on_BtnOperation_Tab4_clicked();
+
+    void on_BtnSelect_4_clicked();
+
 private:
     Ui::MainWindow *ui;
     QString fileName;
     QString fileNameNmea;
     QString fileNameNasaT3;
+    QString fileNameT4;
     // tab2//
     QByteArray ba;
     QByteArray b;
@@ -49,11 +60,14 @@ private:
     QByteArray baNmea;
     QByteArray bT3;
     QByteArray ionT3;
+    // Tab4//
+
     
 
 
 
     int currentOperationTab;
+    QString convertToPosixPath(QString windowsPath);
     void readtime();
     void readata();
     void setprog();

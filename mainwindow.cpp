@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &MainWindow::readata);
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::resetApplication);
-
+    connect(this, &MainWindow::updateTextSignal, this, &MainWindow::updateTextSlot);
 
     ui->progressBar->setMaximum(300);
     ui->progressBar_Tab3->setMaximum(300);
@@ -102,6 +102,65 @@ void MainWindow::on_BtnSelect_Nmea_clicked()
                                             tr("Open file"), "/", tr("file (*.txt)"));
     QThread::msleep(500);
     ui->TxtNmea->setText(fileNameNmea);
+}
+
+
+// ////////////////////////////////connect signals//////////////////////////////////
+void MainWindow::updateTextSlot(const QString& text)
+{
+    ui->TEXTRes_Tab4->append(text);
+}
+
+
+void MainWindow::on_BtnSelect_4_clicked()
+{
+    fileNameT4 = QFileDialog::getOpenFileName(this,
+                                            tr("Open file"), "/", tr("file (*.bin)"));
+    QThread::msleep(500);
+    ui->TxtFile_4->setText(fileNameT4);
+}
+
+
+// ///////////////////////////////////////////////////////////////////////////////
+QString MainWindow::convertToPosixPath(QString windowsPath)
+{
+    windowsPath.replace("\\", "/"); // Replace backslashes with forward slashes
+    if(windowsPath.contains(":")) {
+        windowsPath.replace(":", ""); // Remove the colon
+        windowsPath.prepend("/cygdrive/"); // Prepend with /cygdrive/
+    }
+    return windowsPath;
+}
+
+
+// //////////////////////////////////Tab4-Transfer///////////////////////////////////
+void MainWindow::on_BtnOperation_Tab4_clicked()
+{
+//    fileNameT4 = ui->TxtFile_4->text();
+    QString posixPath = convertToPosixPath(fileNameT4);
+    QString frequency = ui->TxtFreq_4->text();
+    QString sampling = ui->TxtFreqSampl_4->text();
+    QString gain = ui->TxtGain_4->text();
+    QString rxtx = ui->TxtRXTX_4->text();
+
+    QStringList arguments;
+    arguments << "-t" << posixPath
+              << "-f" << frequency
+              << "-s" << sampling
+              << "-a" << rxtx
+              << "-x" << gain;
+
+    QtConcurrent::run([this, arguments]() {
+        QProcess process;
+        process.start("transfer.exe", arguments);
+        process.waitForFinished(-1);
+
+        QString output = process.readAllStandardOutput();
+        QString error = process.readAllStandardError();
+        QString combinedOutput = output + "\n" + error;
+        emit updateTextSignal(combinedOutput);
+
+    });
 }
 
 
@@ -246,5 +305,8 @@ void MainWindow::runmain()
 
     }
 }
+
+
+
 
 
